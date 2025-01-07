@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ar-js-org/ar.js": "^3.4.6",
     "@types/react-qr-reader": "^2.1.7",
     "html5-qrcode": "^2.3.8",
     "react": "^18.3.1",

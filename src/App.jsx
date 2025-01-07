@@ -19,7 +19,41 @@ function App() {
   const onScanSuccess = (decodedText, decodedResult) => {
     setScannedResult(decodedText); // Store the scanned result
     setScanning(false); // Stop scanning
-    alert(`QR Code scanned: ${decodedText}`); // Optionally show an alert
+
+    // Parse the JSON from the decoded text
+    let qrData;
+    try {
+      qrData = JSON.parse(decodedText);
+    } catch (error) {
+      console.error("Failed to parse QR code data", error);
+      return;
+    }
+
+    // Create an AR.js scene dynamically
+    const arContainer = document.createElement("div");
+    arContainer.innerHTML = `
+    <!DOCTYPE html>
+    <html>
+      <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+      <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+      <body style="margin: 0px; overflow: hidden">
+        <a-scene embedded arjs>
+          <a-marker preset="${qrData.preset}">
+            <a-entity
+              position="${qrData.position}"
+              scale="${qrData.scale}"
+              gltf-model="${qrData["gltf-model"]}"
+            ></a-entity>
+          </a-marker>
+          <a-entity camera></a-entity>
+        </a-scene>
+      </body>
+    </html>
+  `;
+
+    // Clear previous content and append the new AR content
+    document.querySelector("#qr-reader").innerHTML = ""; // Clear the scanner
+    document.querySelector("#qr-reader").appendChild(arContainer);
   };
 
   const onScanError = (error) => {
