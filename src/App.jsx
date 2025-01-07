@@ -27,6 +27,7 @@ function App() {
     try {
       qrData = JSON.parse(decodedText);
       setQrData(qrData); // Store the parsed QR data
+      alert(qrData);
     } catch (error) {
       console.error("Failed to parse QR code data", error);
     }
@@ -40,7 +41,7 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1 className="app-title">Ancient Book Hunting Game</h1>
+        <h1 className="app-title">Ancient Book Hunting Game1</h1>
       </header>
       <main className="app-main">
         <button className="scan-button" onClick={startScan}>
