@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { Html5QrcodeScanner } from "html5-qrcode";
 import "./App.css"; // Importing the CSS file
+import ArScene from "./components/arScene";
 
 function App() {
   const [scanning, setScanning] = useState(false);
   const [scannedResult, setScannedResult] = useState(null); // State to hold the scanned result
+  const [qrData, setQrData] = useState(null); // State to hold the parsed QR data
 
   const startScan = () => {
     setScanning(true);
@@ -24,36 +26,10 @@ function App() {
     let qrData;
     try {
       qrData = JSON.parse(decodedText);
+      setQrData(qrData); // Store the parsed QR data
     } catch (error) {
       console.error("Failed to parse QR code data", error);
-      return;
     }
-
-    // Create an AR.js scene dynamically
-    const arContainer = document.createElement("div");
-    arContainer.innerHTML = `
-    <!DOCTYPE html>
-    <html>
-      <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
-      <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
-      <body style="margin: 0px; overflow: hidden">
-        <a-scene embedded arjs>
-          <a-marker preset="${qrData.preset}">
-            <a-entity
-              position="${qrData.position}"
-              scale="${qrData.scale}"
-              gltf-model="${qrData["gltf-model"]}"
-            ></a-entity>
-          </a-marker>
-          <a-entity camera></a-entity>
-        </a-scene>
-      </body>
-    </html>
-  `;
-
-    // Clear previous content and append the new AR content
-    document.querySelector("#qr-reader").innerHTML = ""; // Clear the scanner
-    document.querySelector("#qr-reader").appendChild(arContainer);
   };
 
   const onScanError = (error) => {
@@ -64,7 +40,7 @@ function App() {
   return (
     <div className="app-container">
       <header className="app-header">
-        <h1 className="app-title">Ancient Book Hunting Game By Ar</h1>
+        <h1 className="app-title">Ancient Book Hunting Game</h1>
       </header>
       <main className="app-main">
         <button className="scan-button" onClick={startScan}>
@@ -76,6 +52,14 @@ function App() {
           <div className="scanned-result">
             <h2>Scanned QR Code Result:</h2>
             <p>{scannedResult}</p>
+          </div>
+        )}
+
+        {qrData && (
+          <div className="qr-data">
+            <h2>QR Data:</h2>
+            <p>{JSON.stringify(qrData, null, 2)}</p>
+            <ArScene qrData={qrData} />
           </div>
         )}
       </main>
